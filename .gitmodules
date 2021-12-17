@@ -1,0 +1,3 @@
+[submodule "notes-app-front"]
+	path = notes-app-front
+	url = https://github.com/aandrewsv/notes-app-front.git
