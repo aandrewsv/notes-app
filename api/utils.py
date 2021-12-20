@@ -1,12 +1,12 @@
 from rest_framework.response import Response
 from .models import Note
 from .serializers import NoteSerializer
-from rest_framework.decorators import api_view
 
 
 def createNote(request):
     data = request.data
-    note = Note.objects.create(body=data['body'])
+    note = Note.objects.create(
+        title=data['title'], tag=data['tag'], body=data['body'],)
     serializer = NoteSerializer(note, many=False)
     return Response(serializer.data)
 
