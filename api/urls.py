@@ -6,5 +6,7 @@ urlpatterns = [
     path('notes/', views.getNotes, name="notes"),
     path('notes/<str:pk>/', views.handleNote, name="note"),
     path('signup/', views.signUp, name="signup"),
-    # path('signin/', views.handleNote, name="note"),
+    path('signin/', views.signIn, name="signin"),
+    path('signout/', views.signOut, name="signout"),
+    path('user/', views.userView, name="userview"),
 ]
