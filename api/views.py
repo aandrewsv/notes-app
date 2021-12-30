@@ -3,11 +3,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import AuthenticationFailed
-
-from api.models import User
-from .utils import createNote, deleteNote, getAllNotes, updateNote, getNote
-from .serializers import UserSerializer
 import jwt
+from api.models import User
+from .utils import createNote, deleteNote, getAllNotes, updateNote, getNote, getAuthenticatedUser
+from .serializers import UserSerializer
 import datetime
 
 from api import serializers
@@ -92,15 +91,7 @@ def signIn(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def userView(request):
-    token = request.COOKIES.get('jwt')
-    if not token:
-        raise AuthenticationFailed("Unauthenticated!")
-    try:
-        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-    except jwt.ExpiredSignatureError:
-        raise AuthenticationFailed("Unauthenticated!")
-
-    user = User.objects.filter(id=payload['id']).first()
+    user = getAuthenticatedUser(request)
     serializer = UserSerializer(user)
     return Response(serializer.data)
 
@@ -118,20 +109,22 @@ def signOut(request):
 
 @api_view(['GET', 'POST'])
 def getNotes(request):
+    user = getAuthenticatedUser(request)
     if request.method == 'GET':
-        return getAllNotes(request)
+        return getAllNotes(request, user)
 
     if request.method == 'POST':
-        return createNote(request)
+        return createNote(request, user)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def handleNote(request, pk):
+    user = getAuthenticatedUser(request)
     if request.method == 'GET':
-        return getNote(request, pk)
+        return getNote(request, pk, user)
 
     if request.method == 'PUT':
-        return updateNote(request, pk)
+        return updateNote(request, pk, user)
 
     if request.method == 'DELETE':
-        return deleteNote(request, pk)
+        return deleteNote(request, pk, user)
