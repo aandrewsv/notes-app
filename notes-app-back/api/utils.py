@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
-from .models import Note, User
+from .models import Note, UserAccount
 from .serializers import NoteSerializer
 
 
@@ -53,11 +53,11 @@ def deleteNote(request, pk, user):
 def getAuthenticatedUser(request):
     token = request.COOKIES.get('jwt')
     if not token:
-        raise AuthenticationFailed("Unauthenticated!")
+        raise AuthenticationFailed("Unauthenticated. Try logging in first!")
     try:
         payload = jwt.decode(token, 'secret', algorithms=['HS256'])
     except jwt.ExpiredSignatureError:
-        raise AuthenticationFailed("Unauthenticated!")
+        raise AuthenticationFailed("Unauthenticated. Try logging in first!!")
 
-    user = User.objects.filter(id=payload['id']).first()
+    user = UserAccount.objects.filter(id=payload['id']).first()
     return user

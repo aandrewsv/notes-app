@@ -20,3 +20,4 @@ venv.bak/
 
 # DB #
 db.sqlite3
+notes-app-front/.env
